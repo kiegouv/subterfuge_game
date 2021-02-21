@@ -16,6 +16,7 @@ locations = ['store', 'junkyard', 'pawn shop', 'hospital', 'pharmacy']
 for player in player_list:
     locations.append(f'{player}\'s home'.lower())
     locations.append(f'{player}\'s workplace'.lower())
+
 verbose = True
 
 player_hp = 5
@@ -63,6 +64,15 @@ class Board:
 
         return G
 
+class Location:
+    """
+    Track Board Locations
+    """
+    def __init__(self, name, resource_change, currency_change):
+        self.name = name
+        self.resource_change = resource_change
+        self.currency_change = currency_change
+
 
 class Player:
     """
@@ -98,6 +108,12 @@ class Player:
         self.position_prev = self.position
         self.position = np.random.choice(list(board_state.layout.neighbors(self.position)))
         print(f'{self.name} moved from {self.position_prev} to {self.position}')
+
+    def player_home(self, location, player):
+        if location.name == player.name:
+            return 5
+        else:
+            return 0
 
     def trigger_location_effects(self, board_state):
         if board_state.layout.nodes[self.position]['location'] == f'{self.name}\'s workplace'.lower():

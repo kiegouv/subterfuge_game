@@ -12,9 +12,10 @@ Variables
 player_list = ['Player 1', 'Player 2']
 rounds = 10
 stores = 1
-locations = ['store', 'junkyard', 'pawn shop']
+locations = ['store', 'junkyard', 'pawn shop', 'hospital', 'pharmacy']
 for player in player_list:
     locations.append(f'{player}\'s home'.lower())
+    locations.append(f'{player}\'s workplace'.lower())
 verbose = True
 
 player_hp = 5
@@ -98,6 +99,16 @@ class Player:
         self.position = np.random.choice(list(board_state.layout.neighbors(self.position)))
         print(f'{self.name} moved from {self.position_prev} to {self.position}')
 
+    def trigger_location_effects(self, board_state):
+        if board_state.layout.nodes[self.position]['location'] == f'{self.name}\'s workplace'.lower():
+            self.update_currency(5)
+        if board_state.layout.nodes[self.position]['location'] == 'junkyard':
+            self.update_resources(5)
+        if verbose:
+            print(f"Current location: {board.layout.nodes[player.position]['location']}")
+            print(f"Currency = {self.currency}")
+            print(f"Resources = {self.resources}")
+
 
 '''
 Main Loop
@@ -126,5 +137,6 @@ for round in range(0, rounds):
             print(f'\n---{player.name}: Action {action}---')
             while player.actions > 0:
                 player.travel(board)
+                player.trigger_location_effects(board)
                 player.update_actions(-1)
         player.reset_actions()
